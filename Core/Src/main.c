@@ -21,7 +21,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "hw_spi.hpp"
+#include "hw_gpio.hpp"
+#include "mw_transceiver_rf.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,7 +47,7 @@ SPI_HandleTypeDef hspi3;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+volatile uint16_t timer = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -94,6 +96,12 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI3_Init();
   /* USER CODE BEGIN 2 */
+  Gpio rf_t_spi_ncs(GPIOB, LL_GPIO_PIN_12); // Example GPIO pin for SPI CS
+  Gpio rf_t_enable(GPIOB, LL_GPIO_PIN_13); // Example GPIO pin for RF CE
+
+  Spi rf_t_spi(SPI3, rf_t_spi_ncs);
+
+  TransceiverRF rf_t_nRF24L01(rf_t_spi, rf_t_enable);
 
   /* USER CODE END 2 */
 
