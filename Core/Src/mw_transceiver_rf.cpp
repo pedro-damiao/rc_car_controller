@@ -3,7 +3,8 @@
 TransceiverRF::TransceiverRF(Spi& spi, Gpio& enable)
     : m_spi(spi), m_enable(enable) {
 	m_spi.enable();
-    tx_init(2500, air_data_rate::_1Mbps);
+    init(2500, air_data_rate::_1Mbps);
+    prx_mode();
 }
 
 // Reads a register from the via SPI.
@@ -207,29 +208,6 @@ void TransceiverRF::prx_mode()
     write_register(REG_CONFIG, new_config);
 }
 
-// Initializes the transceiver in RX mode with given channel and data rate
-void TransceiverRF::rx_init(channel MHz, air_data_rate bps)
-{
-    reset();
-
-    prx_mode();
-    power_up();
-
-    rx_set_payload_widths(PAYLOAD_LENGTH);
-
-    set_rf_channel(MHz);
-    set_rf_air_data_rate(bps);
-    set_rf_tx_output_power(output_power::_0dBm);
-
-    set_crc_length(1);
-    set_address_widths(5);
-
-    auto_retransmit_count(3);
-    auto_retransmit_delay(250);
-    
-    m_enable.set();
-}
-
 // Clears the RX_DR (data ready) interrupt flag
 void TransceiverRF::clear_rx_dr()
 {
@@ -255,27 +233,6 @@ void TransceiverRF::ptx_mode()
     new_config &= 0xFE;
 
     write_register(REG_CONFIG, new_config);
-}
-
-// Initializes the transceiver in TX mode with given channel and data rate
-void TransceiverRF::tx_init(channel MHz, air_data_rate bps)
-{
-    reset();
-
-    ptx_mode();
-    power_up();
-
-    set_rf_channel(MHz);
-    set_rf_air_data_rate(bps);
-    set_rf_tx_output_power(output_power::_0dBm);
-
-    set_crc_length(1);
-    set_address_widths(5);
-
-    auto_retransmit_count(3);
-    auto_retransmit_delay(250);
-
-    m_enable.set();
 }
 
 // Writes a payload to the TX FIFO and returns the status
@@ -377,4 +334,26 @@ void TransceiverRF::power_down()
     new_config &= 0xFD;
 
     write_register(REG_CONFIG, new_config);
+}
+
+// Initializes the transceiver in RX mode with given channel and data rate
+void TransceiverRF::init(channel MHz, air_data_rate bps)
+{
+    reset();
+
+    power_up();
+
+    rx_set_payload_widths(PAYLOAD_LENGTH);
+
+    set_rf_channel(MHz);
+    set_rf_air_data_rate(bps);
+    set_rf_tx_output_power(output_power::_0dBm);
+
+    set_crc_length(1);
+    set_address_widths(5);
+
+    auto_retransmit_count(3);
+    auto_retransmit_delay(250);
+    
+    m_enable.set();
 }
