@@ -73,6 +73,7 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define B1_Pin LL_GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
+#define B1_EXTI_IRQn EXTI15_10_IRQn
 #define RF_T_SPI3_MOSI_Pin LL_GPIO_PIN_1
 #define RF_T_SPI3_MOSI_GPIO_Port GPIOC
 #define USART_TX_Pin LL_GPIO_PIN_2
@@ -87,6 +88,7 @@ void Error_Handler(void);
 #define RF_T_ENABLE_GPIO_Port GPIOB
 #define RF_T_NINT_Pin LL_GPIO_PIN_14
 #define RF_T_NINT_GPIO_Port GPIOB
+#define RF_T_NINT_EXTI_IRQn EXTI15_10_IRQn
 #define TMS_Pin LL_GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin LL_GPIO_PIN_14
