@@ -24,6 +24,7 @@
 #include "hw_spi.hpp"
 #include "hw_gpio.hpp"
 #include "mw_transceiver_rf.hpp"
+#include "global_constants.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,6 +46,7 @@
 
 /* USER CODE BEGIN PV */
 volatile uint16_t timer = 0;
+uint8_t rx_data[NRF24L01P_PAYLOAD_LENGTH] = { 0, };
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -131,6 +133,15 @@ int main(void)
     if(timer>1000) {
       led.toggle();
       timer=0;
+    }
+    else if(nrf_it_flag) {
+      if(rf_t_nRF24L01.get_mode() == TransceiverRF::Mode::RX) {
+        rf_t_nRF24L01.rx_irq(rx_data);
+      }
+      else if(rf_t_nRF24L01.get_mode() == TransceiverRF::Mode::TX) {
+        rf_t_nRF24L01.tx_irq();
+      }
+      nrf_it_flag = 0;
     }
     /* USER CODE BEGIN 3 */
   }

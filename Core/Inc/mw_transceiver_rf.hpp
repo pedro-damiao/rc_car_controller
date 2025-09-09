@@ -77,17 +77,20 @@ enum class output_power : uint8_t {
 class TransceiverRF {
 public:
     TransceiverRF(Spi& spi, Gpio& enable);
-    void tx_irq();  
+    void tx_irq();
+    void rx_irq(uint8_t* rx_payload);  
     uint8_t read_register(uint8_t reg);
+
+    enum class Mode {SB, RX, TX };
+    Mode get_mode() const { return m_mode; }
 
 private:
     Spi& m_spi;
     Gpio& m_enable;
+    Mode m_mode = Mode::SB;
+    
+    void init(channel MHz, air_data_rate bps);
 
-    void rx_init(channel MHz, air_data_rate bps);
-    void tx_init(channel MHz, air_data_rate bps);
-
-    void rx_receive(uint8_t* rx_payload);
     void tx_transmit(uint8_t* tx_payload);
 
     void reset();

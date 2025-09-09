@@ -206,6 +206,8 @@ void TransceiverRF::prx_mode()
     new_config |= 1 << 0;
 
     write_register(REG_CONFIG, new_config);
+
+    m_mode = Mode::RX;
 }
 
 // Clears the RX_DR (data ready) interrupt flag
@@ -218,7 +220,7 @@ void TransceiverRF::clear_rx_dr()
 }
 
 // Reads a payload from the RX FIFO and clears the RX_DR flag
-void TransceiverRF::rx_receive(uint8_t* rx_payload)
+void TransceiverRF::rx_irq(uint8_t* rx_payload)
 {
     read_rx_fifo(rx_payload);
     clear_rx_dr();
@@ -233,6 +235,8 @@ void TransceiverRF::ptx_mode()
     new_config &= 0xFE;
 
     write_register(REG_CONFIG, new_config);
+
+    m_mode = Mode::TX;
 }
 
 // Writes a payload to the TX FIFO and returns the status
