@@ -21,9 +21,16 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
+#include "stdio.h"
+
 #include "hw_spi.hpp"
 #include "hw_gpio.hpp"
+#include "hw_adc.hpp"
+
+#include "mw_joystick.hpp"
 #include "mw_transceiver_rf.hpp"
+
 #include "global_constants.h"
 /* USER CODE END Includes */
 
@@ -125,6 +132,10 @@ int main(void)
 
   TransceiverRF rf_t_nRF24L01(rf_t_spi, rf_t_enable);
 
+  HW_ADC joystick_adc(ADC1, HW_ADC::Mode::Scan, 2);
+
+  Mw_Joystick joystick(joystick_adc);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -139,11 +150,20 @@ int main(void)
     else if(nrf_it_flag) {
       if(rf_t_nRF24L01.get_mode() == TransceiverRF::Mode::RX) {
         rf_t_nRF24L01.rx_irq(rx_data);
+        printf("Received data: ");
+        for(int i = 0; i < NRF24L01P_PAYLOAD_LENGTH; i++)
+          printf("%02X ", rx_data[i]);
       }
       else if(rf_t_nRF24L01.get_mode() == TransceiverRF::Mode::TX) {
         rf_t_nRF24L01.tx_irq();
       }
       nrf_it_flag = 0;
+    }
+    else { // TODO: ADD another timer
+      joystick.update();
+      uint16_t x = joystick.getX();
+      uint16_t y = joystick.getY();
+      printf("Joystick X: %u, Y: %u\r\n", x, y);
     }
     /* USER CODE BEGIN 3 */
   }

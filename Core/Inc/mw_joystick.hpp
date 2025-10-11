@@ -3,9 +3,9 @@
 
 #include "hw_adc.hpp"
 
-class MW_Joystick {
+class Mw_Joystick {
 public:
-    MW_Joystick(HW_ADC& adc, uint8_t xChannel, uint8_t yChannel);
+    Mw_Joystick(HW_ADC& adc);
 
     void update();
     uint16_t getX() const;
